@@ -5,18 +5,47 @@
  */
 
 // ============================================
-// CONFIGURATION - UPDATE THESE VALUES
+// CONFIGURATION
 // ============================================
+// API key is stored in localStorage for security (not in code)
+// To set your API key, open browser console and run:
+//   setAirtableKey('your-api-key-here')
+//
+// To check if it's set:
+//   getAirtableKey()
+
 const AIRTABLE_CONFIG = {
-  // Get these from your Airtable account:
-  // 1. Go to https://airtable.com/create/tokens to create a Personal Access Token
-  // 2. Give it read/write access to your base
-  // 3. Find your Base ID in the API docs: https://airtable.com/api
-  API_KEY: 'YOUR_AIRTABLE_API_KEY', // Replace with your Personal Access Token
-  BASE_ID: 'appVYdeqjVvBqzrqd',          // Replace with your Base ID
-  GUESTS_TABLE: 'Guests',           // Table name for guest list
-  RSVPS_TABLE: 'RSVPs'              // Table name for RSVP responses
+  BASE_ID: 'appVYdeqjVvBqzrqd',
+  GUESTS_TABLE: 'Guests',
+  RSVPS_TABLE: 'RSVPs'
 };
+
+// Helper functions for API key management (available in browser console)
+function setAirtableKey(key) {
+  localStorage.setItem('AIRTABLE_API_KEY', key);
+  console.log('Airtable API key saved! Refresh the page to use it.');
+}
+
+function getAirtableKey() {
+  const key = localStorage.getItem('AIRTABLE_API_KEY');
+  if (key) {
+    console.log('API key is set: ' + key.substring(0, 10) + '...');
+    return key;
+  } else {
+    console.log('No API key set. Run: setAirtableKey("your-key-here")');
+    return null;
+  }
+}
+
+function clearAirtableKey() {
+  localStorage.removeItem('AIRTABLE_API_KEY');
+  console.log('Airtable API key cleared.');
+}
+
+// Get the API key from localStorage
+function getApiKey() {
+  return localStorage.getItem('AIRTABLE_API_KEY') || 'YOUR_AIRTABLE_API_KEY';
+}
 
 /*
   AIRTABLE GUESTS TABLE STRUCTURE:
@@ -809,7 +838,7 @@ async function handleFinalSubmit(e) {
  */
 async function findGuestInAirtable(firstName, lastName) {
   // For demo/development without Airtable configured
-  if (AIRTABLE_CONFIG.API_KEY === 'YOUR_AIRTABLE_API_KEY') {
+  if (getApiKey() === 'YOUR_AIRTABLE_API_KEY') {
     return getDemoGuest(firstName, lastName);
   }
 
@@ -820,7 +849,7 @@ async function findGuestInAirtable(firstName, lastName) {
 
   const response = await fetch(`${url}?filterByFormula=${encodeURIComponent(filterFormula)}`, {
     headers: {
-      'Authorization': `Bearer ${AIRTABLE_CONFIG.API_KEY}`,
+      'Authorization': `Bearer ${getApiKey()}`,
       'Content-Type': 'application/json'
     }
   });
@@ -880,7 +909,7 @@ async function fetchPartyMembers(partyName) {
 
   const response = await fetch(`${url}?filterByFormula=${encodeURIComponent(filterFormula)}`, {
     headers: {
-      'Authorization': `Bearer ${AIRTABLE_CONFIG.API_KEY}`,
+      'Authorization': `Bearer ${getApiKey()}`,
       'Content-Type': 'application/json'
     }
   });
@@ -919,7 +948,7 @@ async function fetchExistingRsvp(members) {
 
   const response = await fetch(`${url}?filterByFormula=${encodeURIComponent(filterFormula)}`, {
     headers: {
-      'Authorization': `Bearer ${AIRTABLE_CONFIG.API_KEY}`,
+      'Authorization': `Bearer ${getApiKey()}`,
       'Content-Type': 'application/json'
     }
   });
@@ -1006,7 +1035,7 @@ async function fetchExistingRsvp(members) {
  */
 async function submitRSVPToAirtable(rsvpData) {
   // For demo/development without Airtable configured
-  if (AIRTABLE_CONFIG.API_KEY === 'YOUR_AIRTABLE_API_KEY') {
+  if (getApiKey() === 'YOUR_AIRTABLE_API_KEY') {
     console.log('Demo mode - RSVP data:', rsvpData);
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
     return;
@@ -1080,7 +1109,7 @@ async function submitRSVPToAirtable(rsvpData) {
     const declineResponse = await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${AIRTABLE_CONFIG.API_KEY}`,
+        'Authorization': `Bearer ${getApiKey()}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ records: declineRecords })
@@ -1096,7 +1125,7 @@ async function submitRSVPToAirtable(rsvpData) {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${AIRTABLE_CONFIG.API_KEY}`,
+        'Authorization': `Bearer ${getApiKey()}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ records })
@@ -1120,14 +1149,14 @@ async function submitRSVPToAirtable(rsvpData) {
  * Mark a guest as having responded
  */
 async function updateGuestResponded(guestId) {
-  if (AIRTABLE_CONFIG.API_KEY === 'YOUR_AIRTABLE_API_KEY') return;
+  if (getApiKey() === 'YOUR_AIRTABLE_API_KEY') return;
 
   const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${encodeURIComponent(AIRTABLE_CONFIG.GUESTS_TABLE)}/${guestId}`;
 
   await fetch(url, {
     method: 'PATCH',
     headers: {
-      'Authorization': `Bearer ${AIRTABLE_CONFIG.API_KEY}`,
+      'Authorization': `Bearer ${getApiKey()}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
