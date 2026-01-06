@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSVP | Sophie & Zahi Wedding</title>
+  <meta name="description" content="RSVP for Sophie and Zahi's wedding in the French Riviera.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo">S & Z</a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav__links" id="navLinks">
+        <li><a href="index.html" class="nav__link">Home</a></li>
+        <li><a href="travel.html" class="nav__link">Travel & Stay</a></li>
+        <li><a href="things-to-do.html" class="nav__link">Things to Do</a></li>
+        <li><a href="qanda.html" class="nav__link">Q&A</a></li>
+        <li><a href="registry.html" class="nav__link">Registry</a></li>
+        <li><a href="rsvp.html" class="nav__link active">RSVP</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="container">
+      <p class="subheading">Respond By June 1, 2026</p>
+      <h1>RSVP</h1>
+      <p>We can't wait to celebrate with you! Please let us know if you'll be joining us.</p>
+    </div>
+  </header>
+
+  <!-- RSVP Form Section -->
+  <section class="section rsvp-section">
+    <div class="container">
+      <div class="rsvp-container">
+
+        <!-- Progress Steps -->
+        <div class="rsvp-progress">
+          <div class="rsvp-progress__step active" data-step="1">
+            <span class="rsvp-progress__number">1</span>
+            <span class="rsvp-progress__label">Find</span>
+          </div>
+          <div class="rsvp-progress__line"></div>
+          <div class="rsvp-progress__step" data-step="2">
+            <span class="rsvp-progress__number">2</span>
+            <span class="rsvp-progress__label">Details</span>
+          </div>
+          <div class="rsvp-progress__line"></div>
+          <div class="rsvp-progress__step" data-step="3">
+            <span class="rsvp-progress__number">3</span>
+            <span class="rsvp-progress__label">Confirm</span>
+          </div>
+        </div>
+
+        <!-- Form Steps -->
+        <form id="rsvpForm" class="rsvp-form">
+
+          <!-- Step 1: Find Invitation -->
+          <div class="rsvp-step active" data-step="1">
+            <div class="rsvp-step__header">
+              <h2>Find Your Invitation</h2>
+              <p>Enter your name as it appears on your invitation.</p>
+            </div>
+
+            <div class="rsvp-form__row">
+              <div class="rsvp-form__group">
+                <label for="firstName" class="rsvp-form__label">First Name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  class="rsvp-form__input"
+                  placeholder="e.g., Sophie"
+                  required
+                  autocomplete="given-name"
+                >
+              </div>
+              <div class="rsvp-form__group">
+                <label for="lastName" class="rsvp-form__label">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  class="rsvp-form__input"
+                  placeholder="e.g., Belmand"
+                  required
+                  autocomplete="family-name"
+                >
+              </div>
+            </div>
+            <span class="rsvp-form__error" id="nameError"></span>
+
+            <button type="button" class="btn btn--primary btn--full" id="findInvitation">
+              Find My Invitation
+            </button>
+
+            <p class="rsvp-help">
+              Can't find your invitation? <a href="https://wa.me/447541375799" target="_blank" rel="noopener">Message Zahi on WhatsApp</a>
+            </p>
+          </div>
+
+          <!-- Step 2: Guest Details (Events + Meals per person) -->
+          <div class="rsvp-step" data-step="2">
+            <div class="rsvp-step__header">
+              <h2>Guest Details</h2>
+              <p>For each guest, select which events they'll attend and their meal preference.</p>
+            </div>
+
+            <!-- Guest Details Container - Built dynamically by JS -->
+            <div id="guestDetailsContainer">
+              <!-- Primary Guest -->
+              <div class="rsvp-guest-card" data-guest="primary">
+                <h4 class="rsvp-guest-card__title">
+                  <span class="rsvp-guest-card__number">1</span>
+                  <span id="primaryGuestName">Your Details</span>
+                </h4>
+                <div class="rsvp-guest-card__fields">
+                  <div class="rsvp-form__group">
+                    <label class="rsvp-form__label">Meal Preference</label>
+                    <select name="meal_primary" class="rsvp-form__select" required>
+                      <option value="">Select an option</option>
+                      <option value="meat">Meat</option>
+                      <option value="fish">Fish</option>
+                      <option value="vegetarian">Vegetarian</option>
+                      <option value="vegan">Vegan</option>
+                    </select>
+                  </div>
+                  <div class="rsvp-form__group">
+                    <label class="rsvp-form__label">Dietary Restrictions / Allergies</label>
+                    <input
+                      type="text"
+                      name="dietary_primary"
+                      class="rsvp-form__input"
+                      placeholder="e.g., gluten-free, nut allergy"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Plus One (shown conditionally) -->
+              <div class="rsvp-guest-card" data-guest="plusone" id="plusOneCard" style="display: none;">
+                <h4 class="rsvp-guest-card__title">
+                  <span class="rsvp-guest-card__number">2</span>
+                  Guest
+                </h4>
+                <div class="rsvp-guest-card__fields">
+                  <div class="rsvp-form__group">
+                    <label class="rsvp-form__label">Guest Name</label>
+                    <input
+                      type="text"
+                      name="plusone_name"
+                      class="rsvp-form__input"
+                      placeholder="Full name of your guest"
+                    >
+                  </div>
+                  <div class="rsvp-form__group">
+                    <label class="rsvp-form__label">Meal Preference</label>
+                    <select name="meal_plusone" class="rsvp-form__select">
+                      <option value="">Select an option</option>
+                      <option value="meat">Meat</option>
+                      <option value="fish">Fish</option>
+                      <option value="vegetarian">Vegetarian</option>
+                      <option value="vegan">Vegan</option>
+                    </select>
+                  </div>
+                  <div class="rsvp-form__group">
+                    <label class="rsvp-form__label">Dietary Restrictions / Allergies</label>
+                    <input
+                      type="text"
+                      name="dietary_plusone"
+                      class="rsvp-form__input"
+                      placeholder="e.g., gluten-free, nut allergy"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Message -->
+            <div class="rsvp-form__group">
+              <label class="rsvp-form__label">Message for the couple (optional)</label>
+              <textarea
+                name="message"
+                class="rsvp-form__textarea"
+                placeholder="Share your well wishes or any notes..."
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="rsvp-form__actions">
+              <button type="button" class="btn btn--secondary" id="backToStep1FromDetails">Back</button>
+              <button type="button" class="btn btn--primary" id="toStep3">Review & Submit</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Confirmation / Review -->
+          <div class="rsvp-step" data-step="3">
+            <div class="rsvp-step__header">
+              <h2>Review Your RSVP</h2>
+              <p>Please confirm your details before submitting.</p>
+            </div>
+
+            <div class="rsvp-summary" id="rsvpSummary">
+              <!-- Filled dynamically -->
+            </div>
+
+            <div class="rsvp-form__actions">
+              <button type="button" class="btn btn--secondary" id="backToStep2">Edit</button>
+              <button type="submit" class="btn btn--gold" id="submitRsvp">
+                Confirm RSVP
+              </button>
+            </div>
+          </div>
+
+          <!-- Success State -->
+          <div class="rsvp-step rsvp-success" data-step="success">
+            <div class="rsvp-success__icon">&#10003;</div>
+            <h2>Thank You!</h2>
+            <p id="successMessage">Your RSVP has been received. We can't wait to celebrate with you!</p>
+
+            <!-- Add to Calendar -->
+            <div class="rsvp-calendar">
+              <p class="rsvp-calendar__title">Add to your calendar</p>
+              <div class="rsvp-calendar__buttons">
+                <button type="button" class="btn btn--secondary btn--small" onclick="downloadCalendarFile()">
+                  <span class="btn__icon">&#128197;</span>
+                  Download .ics
+                </button>
+                <a href="#" id="googleCalendarLink" class="btn btn--secondary btn--small" target="_blank" rel="noopener">
+                  <span class="btn__icon">&#128197;</span>
+                  Google Calendar
+                </a>
+              </div>
+            </div>
+
+            <a href="index.html" class="btn btn--primary">Back to Home</a>
+          </div>
+
+          <!-- Decline State -->
+          <div class="rsvp-step rsvp-decline" data-step="decline">
+            <div class="rsvp-decline__icon">&#128148;</div>
+            <h2>We'll Miss You</h2>
+            <p>Thank you for letting us know. We understand and will miss having you there. You'll be in our thoughts on our special day!</p>
+            <a href="index.html" class="btn btn--primary">Back to Home</a>
+          </div>
+
+          <!-- Already Submitted State (locked view) -->
+          <div class="rsvp-step rsvp-already-submitted" data-step="already-submitted">
+            <div class="rsvp-already-submitted__icon">&#128274;</div>
+            <h2>RSVP Already Submitted</h2>
+            <p class="rsvp-already-submitted__subtitle">
+              This RSVP was submitted by <strong id="submittedByName">a party member</strong>.
+            </p>
+
+            <div class="rsvp-summary" id="alreadySubmittedSummary">
+              <!-- Filled dynamically by JS -->
+            </div>
+
+            <!-- Add to Calendar for already submitted guests -->
+            <div class="rsvp-calendar" id="alreadySubmittedCalendar" style="display: none;">
+              <p class="rsvp-calendar__title">Add to your calendar</p>
+              <div class="rsvp-calendar__buttons">
+                <button type="button" class="btn btn--secondary btn--small" onclick="downloadCalendarFile()">
+                  <span class="btn__icon">&#128197;</span>
+                  Download .ics
+                </button>
+                <a href="#" id="googleCalendarLinkAlreadySubmitted" class="btn btn--secondary btn--small" target="_blank" rel="noopener">
+                  <span class="btn__icon">&#128197;</span>
+                  Google Calendar
+                </a>
+              </div>
+            </div>
+
+            <p class="rsvp-already-submitted__note">
+              Need to make changes? Please <a href="https://wa.me/447541375799" target="_blank" rel="noopener">message Zahi on WhatsApp</a> and we'll help you update your response.
+            </p>
+
+            <a href="index.html" class="btn btn--primary">Back to Home</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__content">
+        <h3 class="footer__names">Sophie & Zahi</h3>
+        <p class="footer__date">September 1, 2026 | French Riviera</p>
+        <div class="footer__divider"></div>
+        <ul class="footer__links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="travel.html">Travel & Stay</a></li>
+          <li><a href="things-to-do.html">Things to Do</a></li>
+          <li><a href="qanda.html">Q&A</a></li>
+          <li><a href="registry.html">Registry</a></li>
+          <li><a href="rsvp.html">RSVP</a></li>
+        </ul>
+        <p class="footer__copyright">Made with love for our favorite people</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="rsvp.js"></script>
+</body>
+</html>

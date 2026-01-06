@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.theknot.com)",
+      "Bash(start rsvp.html)",
+      "WebSearch",
+      "Bash(npm --version:*)",
+      "Bash(npm install:*)",
+      "Bash(netlify --version:*)",
+      "Bash(netlify link:*)",
+      "Bash(netlify sites:list:*)",
+      "Bash(netlify deploy:*)",
+      "Bash(start \"\" \"C:\\\\Users\\\\Zahi\\\\claudecode\\\\wedding\\\\rsvp.html\")",
+      "Bash(git init:*)",
+      "Bash(git remote:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
