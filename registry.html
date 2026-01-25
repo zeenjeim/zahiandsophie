@@ -13,6 +13,26 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Animation Styles -->
+  <style>
+    .page-header {
+      animation: fadeInDown 1s ease;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation -->
@@ -48,7 +68,7 @@
   <section class="section">
     <div class="container">
       <div class="text-center">
-        <div class="info-box" style="max-width: 500px; margin: 0 auto;">
+        <div class="info-box animate-on-scroll" style="max-width: 500px; margin: 0 auto;">
           <div class="info-box__icon">&#128179;</div>
           <h3 class="info-box__title">Bank Details</h3>
 
@@ -289,5 +309,18 @@
   </footer>
 
   <script src="script.js"></script>
+
+  <!-- Animation Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const elements = document.querySelectorAll('.animate-on-scroll');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+      elements.forEach(el => observer.observe(el));
+    });
+  </script>
 </body>
 </html>

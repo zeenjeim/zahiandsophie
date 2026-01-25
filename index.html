@@ -13,6 +13,138 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Animation Styles (Test - can be removed) -->
+  <style>
+    /* Scroll-triggered animations */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered delays for grid items */
+    .animate-on-scroll.delay-1 { transition-delay: 0.1s; }
+    .animate-on-scroll.delay-2 { transition-delay: 0.2s; }
+    .animate-on-scroll.delay-3 { transition-delay: 0.3s; }
+    .animate-on-scroll.delay-4 { transition-delay: 0.4s; }
+
+    /* Section header animation */
+    .section-header.animate-on-scroll {
+      transform: translateY(30px);
+    }
+
+    /* Timeline animation - slide from left/right */
+    .timeline__event.animate-on-scroll:nth-child(odd) {
+      transform: translateX(-40px);
+      opacity: 0;
+    }
+    .timeline__event.animate-on-scroll:nth-child(even) {
+      transform: translateX(40px);
+      opacity: 0;
+    }
+    .timeline__event.animate-on-scroll.visible {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    /* Enhanced hover effects */
+    .info-box {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .info-box:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Carousel image hover zoom */
+    .carousel__slide img {
+      transition: transform 0.5s ease;
+    }
+    .carousel__slide:hover img {
+      transform: scale(1.05);
+    }
+
+    /* Floating animation for decorative elements */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .section-header__icon {
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Hero scroll indicator bounce */
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(10px); }
+      60% { transform: translateY(5px); }
+    }
+    .hero__scroll {
+      animation: bounce 2s ease infinite;
+    }
+
+    /* Parallax hero effect */
+    .hero__bg {
+      transition: transform 0.1s ease-out;
+    }
+
+    /* Countdown timer styles */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+    }
+    .countdown__item {
+      text-align: center;
+      min-width: 70px;
+    }
+    .countdown__number {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: white;
+      line-height: 1;
+    }
+    .countdown__label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: var(--space-xs);
+    }
+
+    /* Pulse animation for RSVP button */
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(201, 169, 89, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(201, 169, 89, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(201, 169, 89, 0); }
+    }
+    .btn--primary {
+      animation: pulse 2s infinite;
+    }
+    .btn--primary:hover {
+      animation: none;
+    }
+
+    /* Timeline marker pulse */
+    @keyframes marker-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(107, 143, 113, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(107, 143, 113, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(107, 143, 113, 0); }
+    }
+    .timeline__marker {
+      animation: marker-pulse 2s infinite;
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation -->
@@ -47,7 +179,8 @@
         Sophie <span class="hero__ampersand">&</span> Zahi
       </h1>
       <p class="hero__date animate-fade-in-up animate-delay-2">September 1, 2026</p>
-      <p class="hero__location animate-fade-in-up animate-delay-3">Nice & Villefranche-sur-Mer, France</p>
+      <p class="hero__location animate-fade-in-up animate-delay-3">Côte D'Azur - France</p>
+      <div id="countdown" class="countdown animate-fade-in-up animate-delay-4"></div>
     </div>
     <div class="hero__scroll">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -59,7 +192,7 @@
   <!-- Our Story Section -->
   <section class="section" id="story">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header animate-on-scroll">
         <div class="section-header__decoration">
           <span class="section-header__line"></span>
           <span class="section-header__icon">&#9829;</span>
@@ -69,7 +202,7 @@
         <p>From a chance encounter to a magical proposal in the Dolomites, our journey has been nothing short of extraordinary.</p>
       </div>
 
-      <div class="carousel" id="storyCarousel">
+      <div class="carousel animate-on-scroll" id="storyCarousel">
         <div class="carousel__track">
           <div class="carousel__slide">
             <img src="IMG_7232.jpg" alt="The Proposal in the Dolomites">
@@ -117,19 +250,19 @@
   <!-- Wedding Events Section -->
   <section class="section section--alt" id="events">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header animate-on-scroll">
         <div class="section-header__decoration">
           <span class="section-header__line"></span>
           <span class="section-header__icon">&#10053;</span>
           <span class="section-header__line"></span>
         </div>
         <h2>Wedding Schedule</h2>
-        <p>Join us for three days of celebration in the beautiful French Riviera. We can't wait to share this special time with you.</p>
+        <p>Join us for three days of celebration in the beautiful French Riviera. We can't wait to share this special time with you and create unforgettable memories together.</p>
       </div>
 
       <div class="timeline">
         <!-- Welcome Party -->
-        <div class="timeline__event">
+        <div class="timeline__event animate-on-scroll">
           <div class="timeline__content">
             <span class="timeline__date">Sunday, August 30</span>
             <h3 class="timeline__title">Welcome Party</h3>
@@ -143,7 +276,7 @@
         </div>
 
         <!-- Beach Party -->
-        <div class="timeline__event">
+        <div class="timeline__event animate-on-scroll">
           <div class="timeline__content">
             <span class="timeline__date">Monday, August 31</span>
             <h3 class="timeline__title">Beach Party</h3>
@@ -157,7 +290,7 @@
         </div>
 
         <!-- Wedding Ceremony -->
-        <div class="timeline__event">
+        <div class="timeline__event animate-on-scroll">
           <div class="timeline__content">
             <span class="timeline__date">Tuesday, September 1</span>
             <h3 class="timeline__title">Wedding Ceremony</h3>
@@ -174,7 +307,7 @@
         </div>
 
         <!-- Reception -->
-        <div class="timeline__event">
+        <div class="timeline__event animate-on-scroll">
           <div class="timeline__content">
             <span class="timeline__date">Tuesday, September 1</span>
             <h3 class="timeline__title">Reception</h3>
@@ -198,7 +331,7 @@
   <section class="section" id="info">
     <div class="container">
       <div class="card-grid">
-        <div class="info-box">
+        <div class="info-box animate-on-scroll delay-1">
           <div class="info-box__icon">&#9992;</div>
           <h3 class="info-box__title">Getting There</h3>
           <p class="info-box__text">
@@ -207,7 +340,7 @@
           <a href="travel.html" class="btn btn--secondary">Travel Details</a>
         </div>
 
-        <div class="info-box">
+        <div class="info-box animate-on-scroll delay-2">
           <div class="info-box__icon">&#127968;</div>
           <h3 class="info-box__title">Where to Stay</h3>
           <p class="info-box__text">
@@ -216,7 +349,7 @@
           <a href="travel.html#accommodations" class="btn btn--secondary">View Hotels</a>
         </div>
 
-        <div class="info-box">
+        <div class="info-box animate-on-scroll delay-3">
           <div class="info-box__icon">&#127796;</div>
           <h3 class="info-box__title">Things to Do</h3>
           <p class="info-box__text">
@@ -249,5 +382,98 @@
   </footer>
 
   <script src="script.js"></script>
+
+  <!-- Animation Scripts (Test - can be removed) -->
+  <script>
+    // Scroll-triggered animations
+    function initScrollAnimations() {
+      const elements = document.querySelectorAll('.animate-on-scroll');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      elements.forEach(el => observer.observe(el));
+    }
+
+    // Countdown timer
+    function initCountdownTimer() {
+      const countdownEl = document.getElementById('countdown');
+      if (!countdownEl) return;
+
+      const weddingDate = new Date('September 1, 2026 15:30:00').getTime();
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+
+        if (distance < 0) {
+          countdownEl.innerHTML = '<p style="color: white; font-size: 1.2rem;">The big day is here!</p>';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdownEl.innerHTML = `
+          <div class="countdown__item">
+            <span class="countdown__number">${days}</span>
+            <span class="countdown__label">Days</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__number">${hours}</span>
+            <span class="countdown__label">Hours</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__number">${minutes}</span>
+            <span class="countdown__label">Minutes</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__number">${seconds}</span>
+            <span class="countdown__label">Seconds</span>
+          </div>
+        `;
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    // Subtle parallax on hero image
+    function initParallax() {
+      const heroBg = document.querySelector('.hero__bg');
+      if (!heroBg) return;
+
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            const scrolled = window.scrollY;
+            if (scrolled < window.innerHeight) {
+              heroBg.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    }
+
+    // Initialize all animations
+    document.addEventListener('DOMContentLoaded', () => {
+      initScrollAnimations();
+      initCountdownTimer();
+      initParallax();
+    });
+  </script>
 </body>
 </html>

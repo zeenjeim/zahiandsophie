@@ -13,6 +13,30 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Animation Styles -->
+  <style>
+    .page-header {
+      animation: fadeInDown 1s ease;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .rsvp-container {
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .rsvp-progress__step {
+      transition: transform 0.3s ease;
+    }
+    .rsvp-progress__step.active {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation -->
