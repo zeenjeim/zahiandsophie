@@ -40,114 +40,233 @@
     <div class="container">
       <p class="subheading">Gifts</p>
       <h1>Registry</h1>
-      <p>Your presence at our wedding is the greatest gift of all. For those who wish to honor us with a gift, we've created a few options below.</p>
+      <p>Your presence at our wedding is the greatest gift of all. For those who wish to honor us with a gift, we've added our bank details below.</p>
     </div>
   </header>
 
-  <!-- Registry Intro -->
-  <section class="section">
-    <div class="container">
-      <div class="registry-intro">
-        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--color-charcoal);">
-          We feel so grateful to have you in our lives and are thrilled that you'll be joining us in the French Riviera to celebrate our wedding. Your presence truly means the world to us.
-        </p>
-        <p style="font-size: 1.1rem; line-height: 1.8; color: var(--color-charcoal); margin-top: var(--space-lg);">
-          For those who have asked about gifts, we've put together a few options below. But please know that your love and support are the only gifts we need!
-        </p>
-      </div>
-
-      <div class="registry-options">
-        <!-- Honeymoon Fund -->
-        <div class="registry-card">
-          <div class="registry-card__icon">&#127796;</div>
-          <h3 class="registry-card__title">Honeymoon Fund</h3>
-          <p class="registry-card__description">
-            Help us create unforgettable memories on our honeymoon adventure! We're dreaming of exploring new destinations together.
-          </p>
-          <a href="#" class="btn btn--primary">Contribute</a>
-          <p style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--color-stone);">
-            <em>Link coming soon</em>
-          </p>
-        </div>
-
-        <!-- Traditional Registry -->
-        <div class="registry-card">
-          <div class="registry-card__icon">&#127873;</div>
-          <h3 class="registry-card__title">Gift Registry</h3>
-          <p class="registry-card__description">
-            For those who prefer traditional gifts, we've registered at a few of our favorite stores.
-          </p>
-          <a href="#" class="btn btn--primary">View Registry</a>
-          <p style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--color-stone);">
-            <em>Link coming soon</em>
-          </p>
-        </div>
-
-        <!-- Charity -->
-        <div class="registry-card">
-          <div class="registry-card__icon">&#128156;</div>
-          <h3 class="registry-card__title">Charitable Donation</h3>
-          <p class="registry-card__description">
-            In lieu of a gift, consider making a donation to a cause close to our hearts.
-          </p>
-          <a href="#" class="btn btn--primary">Learn More</a>
-          <p style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--color-stone);">
-            <em>Link coming soon</em>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Cash Gift Info -->
-  <section class="section section--alt">
-    <div class="container">
-      <div class="text-center">
-        <div class="section-header__decoration mb-3">
-          <span class="section-header__line"></span>
-          <span class="section-header__icon">&#128176;</span>
-          <span class="section-header__line"></span>
-        </div>
-        <h2 class="mb-3">Cash Gifts</h2>
-        <p style="max-width: 600px; margin: 0 auto var(--space-xl); color: var(--color-stone);">
-          If you'd prefer to give a cash gift, we are truly grateful for your generosity. As we're traveling internationally, here are a few options:
-        </p>
-
-        <div class="card-grid" style="max-width: 800px; margin: 0 auto;">
-          <div class="info-box">
-            <div class="info-box__icon">&#128179;</div>
-            <h3 class="info-box__title">Bank Transfer</h3>
-            <p class="info-box__text">
-              For bank transfer details, please reach out to us directly and we'll provide you with our account information.
-            </p>
-          </div>
-
-          <div class="info-box">
-            <div class="info-box__icon">&#127881;</div>
-            <h3 class="info-box__title">On the Day</h3>
-            <p class="info-box__text">
-              We will have a card box at the reception for those who wish to bring a card or gift on the wedding day.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Thank You Note -->
+  <!-- Bank Details -->
   <section class="section">
     <div class="container">
       <div class="text-center">
-        <h2 class="mb-3">Thank You</h2>
-        <p style="max-width: 600px; margin: 0 auto; color: var(--color-stone); font-size: 1.1rem; line-height: 1.8;">
-          Whether you choose to give a gift or simply celebrate with us, we are incredibly thankful to have such wonderful people in our lives. We can't wait to share this special moment with you.
-        </p>
-        <p style="font-family: var(--font-serif); font-size: 1.5rem; color: var(--color-forest); margin-top: var(--space-xl);">
-          With love,<br>Sophie & Zahi
-        </p>
+        <div class="info-box" style="max-width: 500px; margin: 0 auto;">
+          <div class="info-box__icon">&#128179;</div>
+          <h3 class="info-box__title">Bank Details</h3>
+
+          <div class="bank-details">
+            <div class="bank-row">
+              <span class="bank-label">Account Name</span>
+              <span class="bank-value" data-copy="Zahi Njeim, Sophie Belmand">Zahi Njeim, Sophie Belmand</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="bank-row">
+              <span class="bank-label">Bank Name</span>
+              <span class="bank-value" data-copy="Revolut">Revolut</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="bank-row">
+              <span class="bank-label">Bank Address</span>
+              <span class="bank-value" data-copy="30 South Colonnade, E14 5HX, London, United Kingdom">30 South Colonnade, E14 5HX, London, United Kingdom</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="bank-section-title">UK Transfers</div>
+            <div class="bank-row">
+              <span class="bank-label">Sort Code</span>
+              <span class="bank-value" data-copy="23-01-20">23-01-20</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="bank-row">
+              <span class="bank-label">Account Number</span>
+              <span class="bank-value" data-copy="36638065">36638065</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="bank-section-title">International Transfers</div>
+            <div class="bank-row">
+              <span class="bank-label">IBAN</span>
+              <span class="bank-value" data-copy="GB71REVO23012036638065">GB71 REVO 2301 2036 6380 65</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="bank-row">
+              <span class="bank-label">BIC / SWIFT</span>
+              <span class="bank-value" data-copy="REVOGB21">REVOGB21</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="bank-row">
+              <span class="bank-label">Correspondent BIC</span>
+              <span class="bank-value" data-copy="CHASGB2L">CHASGB2L</span>
+              <button class="copy-btn" onclick="copyToClipboard(this)" aria-label="Copy">
+                <span class="copy-tooltip">Copied!</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
+
+  <style>
+    .bank-details {
+      text-align: left;
+      margin-top: var(--space-lg);
+    }
+    .bank-section-title {
+      font-weight: 600;
+      color: var(--color-sage);
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-sm);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .bank-row {
+      display: flex;
+      align-items: center;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--color-cream-dark);
+      gap: var(--space-sm);
+    }
+    .bank-row:last-child {
+      border-bottom: none;
+    }
+    .bank-label {
+      font-weight: 500;
+      color: var(--color-stone);
+      min-width: 120px;
+      font-size: 0.85rem;
+    }
+    .bank-value {
+      flex: 1;
+      color: var(--color-charcoal);
+      font-size: 0.95rem;
+      word-break: break-word;
+    }
+    .copy-btn {
+      background: var(--color-cream);
+      border: 1px solid var(--color-cream-dark);
+      border-radius: 6px;
+      padding: 6px;
+      cursor: pointer;
+      color: var(--color-stone);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover {
+      background: var(--color-sage-light);
+      color: white;
+      border-color: var(--color-sage-light);
+    }
+    .copy-btn {
+      position: relative;
+    }
+    .copy-btn.copied {
+      background: var(--color-sage);
+      color: white;
+      border-color: var(--color-sage);
+    }
+    .copy-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-forest);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+      margin-bottom: 6px;
+      z-index: 10;
+    }
+    .copy-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--color-forest);
+    }
+    .copy-btn.copied .copy-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+    @media (max-width: 500px) {
+      .bank-row {
+        flex-wrap: wrap;
+      }
+      .bank-label {
+        min-width: 100%;
+        margin-bottom: 2px;
+      }
+      .bank-value {
+        flex: 1;
+      }
+    }
+  </style>
+
+  <script>
+    function copyToClipboard(btn) {
+      const value = btn.previousElementSibling.getAttribute('data-copy');
+      navigator.clipboard.writeText(value).then(() => {
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 1500);
+      });
+    }
+  </script>
 
   <!-- Footer -->
   <footer class="footer">
