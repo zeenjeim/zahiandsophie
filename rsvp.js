@@ -822,7 +822,9 @@ async function findGuestInAirtable(firstName, lastName) {
   }
 
   if (!response.ok) {
-    throw new Error('Failed to look up guest');
+    const errorData = await response.json().catch(() => ({}));
+    console.error('Lookup error:', response.status, errorData);
+    throw new Error(errorData.error || 'Failed to look up guest');
   }
 
   return await response.json();
