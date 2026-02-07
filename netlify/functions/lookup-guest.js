@@ -21,9 +21,13 @@ async function searchGuest(apiKey, baseId, firstName, lastName) {
   const filterFormula = `AND(LOWER({First Name}) = LOWER("${firstName.replace(/"/g, '\\"')}"), LOWER({Last Name}) = LOWER("${lastName.replace(/"/g, '\\"')}"))`;
   const url = `${AIRTABLE_BASE_URL}/${baseId}/${table}?filterByFormula=${encodeURIComponent(filterFormula)}`;
 
+  console.log('Airtable request URL:', url);
+  console.log('API key starts with:', apiKey.substring(0, 8) + '...');
   const response = await fetch(url, { headers: airtableHeaders(apiKey) });
   if (!response.ok) {
-    throw new Error(`Airtable search failed: ${response.status}`);
+    const errorBody = await response.text();
+    console.error('Airtable error body:', errorBody);
+    throw new Error(`Airtable search failed: ${response.status} - ${errorBody}`);
   }
 
   const data = await response.json();
