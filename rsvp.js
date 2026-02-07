@@ -7,44 +7,13 @@
 // ============================================
 // CONFIGURATION
 // ============================================
-// API key is stored in localStorage for security (not in code)
-// To set your API key, open browser console and run:
-//   setAirtableKey('your-api-key-here')
-//
-// To check if it's set:
-//   getAirtableKey()
+// Airtable API calls are proxied through Netlify Functions.
+// The API key is stored server-side as an environment variable.
+// Demo mode is used for local development (localhost/file://).
 
-const AIRTABLE_CONFIG = {
-  BASE_ID: 'appVYdeqjVvBqzrqd',
-  GUESTS_TABLE: 'Guests',
-  RSVPS_TABLE: 'RSVPs'
-};
-
-// Helper functions for API key management (available in browser console)
-function setAirtableKey(key) {
-  localStorage.setItem('AIRTABLE_API_KEY', key);
-  console.log('Airtable API key saved! Refresh the page to use it.');
-}
-
-function getAirtableKey() {
-  const key = localStorage.getItem('AIRTABLE_API_KEY');
-  if (key) {
-    console.log('API key is set: ' + key.substring(0, 10) + '...');
-    return key;
-  } else {
-    console.log('No API key set. Run: setAirtableKey("your-key-here")');
-    return null;
-  }
-}
-
-function clearAirtableKey() {
-  localStorage.removeItem('AIRTABLE_API_KEY');
-  console.log('Airtable API key cleared.');
-}
-
-// Get the API key from localStorage
-function getApiKey() {
-  return localStorage.getItem('AIRTABLE_API_KEY') || 'YOUR_AIRTABLE_API_KEY';
+function isDemoMode() {
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1' || host === '' || window.location.protocol === 'file:';
 }
 
 /*
@@ -833,338 +802,53 @@ async function handleFinalSubmit(e) {
 // ============================================
 
 /**
- * Find a guest in Airtable by first and last name
+ * Find a guest via Netlify function (or demo mode for local dev)
  * Returns { leader, members, hasPlusOne, existingRsvp } or null if not found
  */
 async function findGuestInAirtable(firstName, lastName) {
-  // For demo/development without Airtable configured
-  if (getApiKey() === 'YOUR_AIRTABLE_API_KEY') {
+  // Use demo mode for local development
+  if (isDemoMode()) {
     return getDemoGuest(firstName, lastName);
   }
 
-  const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${encodeURIComponent(AIRTABLE_CONFIG.GUESTS_TABLE)}`;
-
-  // Search for guest by first and last name (case-insensitive)
-  const filterFormula = `AND(LOWER({First Name}) = LOWER("${firstName.replace(/"/g, '\\"')}"), LOWER({Last Name}) = LOWER("${lastName.replace(/"/g, '\\"')}"))`;
-
-  const response = await fetch(`${url}?filterByFormula=${encodeURIComponent(filterFormula)}`, {
-    headers: {
-      'Authorization': `Bearer ${getApiKey()}`,
-      'Content-Type': 'application/json'
-    }
+  const response = await fetch('/.netlify/functions/lookup-guest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ firstName, lastName })
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to search guests');
-  }
-
-  const data = await response.json();
-
-  if (!data.records || data.records.length === 0) {
+  if (response.status === 404) {
     return null;
   }
 
-  const record = data.records[0];
-  const guest = {
-    id: record.id,
-    firstName: record.fields['First Name'],
-    lastName: record.fields['Last Name'],
-    email: record.fields.Email,
-    partyName: record.fields['Party Name'] || '',
-    plusOneAllowed: record.fields['Plus One Allowed'] || false,
-    hasResponded: record.fields['Has Responded'] || false,
-    isAdult: record.fields['Adult/Kid'] !== 'Kid'  // Default to adult unless explicitly "Kid"
-  };
-
-  // If guest has a party name, fetch all party members
-  let members = [guest];
-  if (guest.partyName) {
-    const partyMembers = await fetchPartyMembers(guest.partyName);
-    members = partyMembers;
-  }
-
-  // Check if anyone in the party has already responded
-  const hasResponded = members.some(m => m.hasResponded);
-  let existingRsvpData = null;
-
-  if (hasResponded) {
-    // Fetch the existing RSVP records for this party
-    existingRsvpData = await fetchExistingRsvp(members);
-  }
-
-  return {
-    leader: guest,
-    members: members,
-    hasPlusOne: guest.plusOneAllowed && !guest.partyName,
-    existingRsvp: existingRsvpData
-  };
-}
-
-/**
- * Fetch all members of a party by party name
- */
-async function fetchPartyMembers(partyName) {
-  const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${encodeURIComponent(AIRTABLE_CONFIG.GUESTS_TABLE)}`;
-  const filterFormula = `{Party Name} = "${partyName.replace(/"/g, '\\"')}"`;
-
-  const response = await fetch(`${url}?filterByFormula=${encodeURIComponent(filterFormula)}`, {
-    headers: {
-      'Authorization': `Bearer ${getApiKey()}`,
-      'Content-Type': 'application/json'
-    }
-  });
-
   if (!response.ok) {
-    throw new Error('Failed to fetch party members');
+    throw new Error('Failed to look up guest');
   }
 
-  const data = await response.json();
-
-  return data.records.map(record => ({
-    id: record.id,
-    firstName: record.fields['First Name'],
-    lastName: record.fields['Last Name'],
-    email: record.fields.Email,
-    partyName: record.fields['Party Name'],
-    hasResponded: record.fields['Has Responded'] || false,
-    isAdult: record.fields['Adult/Kid'] !== 'Kid'  // Default to adult unless explicitly "Kid"
-  }));
+  return await response.json();
 }
 
 /**
- * Fetch existing RSVP records for party members
- * Returns structured data for display in the locked view
- */
-async function fetchExistingRsvp(members) {
-  const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${encodeURIComponent(AIRTABLE_CONFIG.RSVPS_TABLE)}`;
-
-  // Get guest IDs to filter by
-  const guestIds = members.map(m => m.id);
-
-  // Fetch RSVPs linked to any of these guests
-  // This formula checks if the Guest linked record field contains any of our guest IDs
-  const filterParts = guestIds.map(id => `FIND("${id}", ARRAYJOIN({Guest}))`);
-  const filterFormula = `OR(${filterParts.join(',')})`;
-
-  const response = await fetch(`${url}?filterByFormula=${encodeURIComponent(filterFormula)}`, {
-    headers: {
-      'Authorization': `Bearer ${getApiKey()}`,
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    // If we can't fetch RSVP details, still show locked state with minimal info
-    return {
-      attending: true,
-      guests: [],
-      submittedBy: 'a party member',
-      message: ''
-    };
-  }
-
-  const data = await response.json();
-
-  if (!data.records || data.records.length === 0) {
-    // No RSVP records found but hasResponded was true - they may have declined
-    return {
-      attending: false,
-      guests: [],
-      submittedBy: 'a party member',
-      message: ''
-    };
-  }
-
-  // Parse the RSVP records into our display format
-  const attendingGuests = [];
-  const notAttendingGuests = [];
-  let submittedBy = '';
-  let message = '';
-
-  data.records.forEach(record => {
-    const fields = record.fields;
-
-    // Get submitted by from any record
-    if (!submittedBy && fields['Submitted By']) {
-      submittedBy = fields['Submitted By'];
-    }
-
-    // Get message if present
-    if (!message && fields['Message']) {
-      message = fields['Message'];
-    }
-
-    // Check if this guest is attending or not
-    if (fields['Attending'] === false) {
-      notAttendingGuests.push({
-        name: fields['Guest Name'],
-        isPlusOne: fields['Is Plus One'] || false
-      });
-      return;
-    }
-
-    // Build events array for attending guest
-    const events = [];
-    if (fields['Welcome Party']) events.push('welcome');
-    if (fields['Beach Party']) events.push('beach');
-    if (fields['Wedding']) events.push('wedding');
-
-    attendingGuests.push({
-      name: fields['Guest Name'],
-      events: events,
-      meal: fields['Meal'] || '',
-      dietary: fields['Dietary'] || '',
-      isPlusOne: fields['Is Plus One'] || false
-    });
-  });
-
-  // Determine if this is a full decline (no one attending) or partial attendance
-  const attending = attendingGuests.length > 0;
-
-  return {
-    attending: attending,
-    guests: attendingGuests,
-    notAttendingGuests: notAttendingGuests,
-    submittedBy: submittedBy || 'a party member',
-    message: message
-  };
-}
-
-/**
- * Submit RSVP to Airtable
+ * Submit RSVP via Netlify function (or demo mode for local dev)
  */
 async function submitRSVPToAirtable(rsvpData) {
-  // For demo/development without Airtable configured
-  if (getApiKey() === 'YOUR_AIRTABLE_API_KEY') {
+  // Use demo mode for local development
+  if (isDemoMode()) {
     console.log('Demo mode - RSVP data:', rsvpData);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return;
   }
 
-  const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${encodeURIComponent(AIRTABLE_CONFIG.RSVPS_TABLE)}`;
-
-  // Create RSVP records for each guest
-  const records = [];
-
-  // Add attending guests with their event details
-  rsvpData.guests
-    .filter(g => rsvpData.attending && !g.notAttending && g.events.length > 0)
-    .forEach(guest => {
-      records.push({
-        fields: {
-          'Guest': [guest.id],
-          'Guest Name': `${guest.firstName} ${guest.lastName}`,
-          'Attending': true,
-          'Welcome Party': guest.events.includes('welcome'),
-          'Beach Party': guest.events.includes('beach'),
-          'Wedding': guest.events.includes('wedding'),
-          'Meal': guest.meal,
-          'Dietary': guest.dietary,
-          'Is Adult': guest.isAdult
-        }
-      });
-    });
-
-  // Add non-attending guests (individual declines within a party)
-  rsvpData.guests
-    .filter(g => rsvpData.attending && g.notAttending)
-    .forEach(guest => {
-      records.push({
-        fields: {
-          'Guest': [guest.id],
-          'Guest Name': `${guest.firstName} ${guest.lastName}`,
-          'Attending': false,
-          'Is Adult': guest.isAdult
-        }
-      });
-    });
-
-  // Add plus one record if applicable
-  if (rsvpData.plusOne && rsvpData.plusOne.name) {
-    records.push({
-      fields: {
-        'Guest Name': `${rsvpData.plusOne.name} (Guest of ${rsvpData.leader.firstName})`,
-        'Attending': true,
-        'Welcome Party': rsvpData.plusOne.events.includes('welcome'),
-        'Beach Party': rsvpData.plusOne.events.includes('beach'),
-        'Wedding': rsvpData.plusOne.events.includes('wedding'),
-        'Meal': rsvpData.plusOne.meal,
-        'Dietary': rsvpData.plusOne.dietary,
-        'Is Plus One': true
-      }
-    });
-  }
-
-  // If declining, just create one record for the whole party
-  if (!rsvpData.attending) {
-    const declineRecords = [{
-      fields: {
-        'Guest': [rsvpData.leader.id],
-        'Guest Name': rsvpData.members.map(m => `${m.firstName} ${m.lastName}`).join(', '),
-        'Attending': false,
-        'Message': rsvpData.message || ''
-      }
-    }];
-
-    const declineResponse = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getApiKey()}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ records: declineRecords })
-    });
-    const declineResult = await declineResponse.json();
-    console.log('Decline RSVP response:', declineResult);
-    if (declineResult.error) {
-      console.error('Airtable error:', declineResult.error);
-    }
-  } else if (records.length > 0) {
-    // Submit all records
-    console.log('Submitting RSVP records:', records);
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${getApiKey()}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ records })
-    });
-    const result = await response.json();
-    console.log('RSVP submission response:', result);
-    if (result.error) {
-      console.error('Airtable error:', result.error);
-    }
-  } else {
-    console.log('No records to submit - records array is empty');
-  }
-
-  // Mark all party members as responded
-  for (const member of rsvpData.members) {
-    await updateGuestResponded(member.id);
-  }
-}
-
-/**
- * Mark a guest as having responded
- */
-async function updateGuestResponded(guestId) {
-  if (getApiKey() === 'YOUR_AIRTABLE_API_KEY') return;
-
-  const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${encodeURIComponent(AIRTABLE_CONFIG.GUESTS_TABLE)}/${guestId}`;
-
-  await fetch(url, {
-    method: 'PATCH',
-    headers: {
-      'Authorization': `Bearer ${getApiKey()}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      fields: {
-        'Has Responded': true
-      }
-    })
+  const response = await fetch('/.netlify/functions/submit-rsvp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(rsvpData)
   });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to submit RSVP');
+  }
 }
 
 // ============================================
