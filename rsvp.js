@@ -59,8 +59,8 @@ let existingRsvp = null;     // Existing RSVP data if party has already responde
 
 let formData = {
   attending: null,
-  guests: [],        // Array of { id, firstName, lastName, isAdult, events: [], meal, dietary }
-  plusOne: null,     // { name, events: [], meal, dietary } if applicable
+  guests: [],        // Array of { id, firstName, lastName, isAdult, events: [], dietary }
+  plusOne: null,     // { name, events: [], dietary } if applicable
   message: ''
 };
 
@@ -222,14 +222,6 @@ function showAlreadySubmittedView() {
     wedding: 'Wedding'
   };
 
-  const mealNames = {
-    meat: 'Meat',
-    fish: 'Fish',
-    vegetarian: 'Vegetarian',
-    vegan: 'Vegan',
-    kids: 'Kids Menu'
-  };
-
   const summaryEl = document.getElementById('alreadySubmittedSummary');
   if (!summaryEl) return;
 
@@ -249,7 +241,6 @@ function showAlreadySubmittedView() {
         <div class="rsvp-summary__guest">
           <div class="rsvp-summary__guest-name">${guest.name}</div>
           <div class="rsvp-summary__guest-events">${eventsText}</div>
-          <div>Meal: ${mealNames[guest.meal] || guest.meal || 'Not specified'}</div>
           ${guest.dietary ? `<div>Dietary: ${guest.dietary}</div>` : ''}
         </div>
       `;
@@ -421,25 +412,6 @@ function buildGuestDetailsUI() {
             </div>
           </div>
 
-          <!-- Meal preference -->
-          <div class="rsvp-form__group">
-            <label class="rsvp-form__label">Meal for Wedding Dinner</label>
-            <select name="meal_${member.id}" class="rsvp-form__select" required>
-              <option value="">Select an option</option>
-              ${isAdult ? `
-                <option value="meat">Meat</option>
-                <option value="fish">Fish</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="vegan">Vegan</option>
-              ` : `
-                <option value="kids">Kids Menu</option>
-                <option value="meat">Adult - Meat</option>
-                <option value="fish">Adult - Fish</option>
-                <option value="vegetarian">Adult - Vegetarian</option>
-              `}
-            </select>
-          </div>
-
           <!-- Dietary restrictions -->
           <div class="rsvp-form__group">
             <label class="rsvp-form__label">Dietary Restrictions / Allergies</label>
@@ -493,16 +465,6 @@ function buildGuestDetailsUI() {
             </div>
           </div>
 
-          <div class="rsvp-form__group">
-            <label class="rsvp-form__label">Meal Preference</label>
-            <select name="plusone_meal" class="rsvp-form__select">
-              <option value="">Select an option</option>
-              <option value="meat">Meat</option>
-              <option value="fish">Fish</option>
-              <option value="vegetarian">Vegetarian</option>
-              <option value="vegan">Vegan</option>
-            </select>
-          </div>
           <div class="rsvp-form__group">
             <label class="rsvp-form__label">Dietary Restrictions / Allergies</label>
             <input
@@ -603,7 +565,7 @@ function handleDetailsSubmit() {
       isAdult: member.isAdult !== false,
       notAttending: false,
       events: events,
-      meal: document.querySelector(`select[name="meal_${member.id}"]`)?.value || '',
+      meal: '',
       dietary: document.querySelector(`input[name="dietary_${member.id}"]`)?.value || ''
     };
   });
@@ -621,7 +583,7 @@ function handleDetailsSubmit() {
       formData.plusOne = {
         name: plusOneName,
         events: plusOneEvents,
-        meal: document.querySelector('select[name="plusone_meal"]')?.value || '',
+        meal: '',
         dietary: document.querySelector('input[name="plusone_dietary"]')?.value || ''
       };
     } else {
@@ -649,22 +611,10 @@ function handleDetailsSubmit() {
     }
   }
 
-  // Check that attending guests have meal selections
-  for (const guest of attendingGuests) {
-    if (guest.events.length > 0 && !guest.meal) {
-      alert(`Please select a meal preference for ${guest.firstName}.`);
-      return;
-    }
-  }
-
-  // Check plus one has events and meal if they're coming
+  // Check plus one has events if they're coming
   if (formData.plusOne && formData.plusOne.name) {
     if (formData.plusOne.events.length === 0) {
       alert('Please select at least one event for your guest to attend.');
-      return;
-    }
-    if (!formData.plusOne.meal) {
-      alert('Please select a meal preference for your guest.');
       return;
     }
   }
@@ -685,14 +635,6 @@ function generateSummary() {
     welcome: 'Welcome Party',
     beach: 'Beach Party',
     wedding: 'Wedding'
-  };
-
-  const mealNames = {
-    meat: 'Meat',
-    fish: 'Fish',
-    vegetarian: 'Vegetarian',
-    vegan: 'Vegan',
-    kids: 'Kids Menu'
   };
 
   // Split guests into attending and not attending
@@ -718,7 +660,6 @@ function generateSummary() {
         <div class="rsvp-summary__guest">
           <div class="rsvp-summary__guest-name">${guest.firstName} ${guest.lastName}</div>
           <div class="rsvp-summary__guest-events">${eventsText}</div>
-          <div>Meal: ${mealNames[guest.meal] || guest.meal}</div>
           ${guest.dietary ? `<div>Dietary: ${guest.dietary}</div>` : ''}
         </div>
       `;
@@ -731,7 +672,6 @@ function generateSummary() {
         <div class="rsvp-summary__guest">
           <div class="rsvp-summary__guest-name">${formData.plusOne.name} <span style="color: var(--color-sage);">(+1)</span></div>
           <div class="rsvp-summary__guest-events">${plusOneEvents}</div>
-          <div>Meal: ${mealNames[formData.plusOne.meal] || formData.plusOne.meal}</div>
           ${formData.plusOne.dietary ? `<div>Dietary: ${formData.plusOne.dietary}</div>` : ''}
         </div>
       `;
