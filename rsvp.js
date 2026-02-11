@@ -1003,38 +1003,38 @@ function sanitize(str) {
 const WEDDING_EVENTS = [
   {
     title: "Sophie & Zahi's Wedding - Welcome Party",
-    start: new Date(2026, 7, 30, 18, 0),  // Aug 30, 2026, 6pm
-    end: new Date(2026, 7, 30, 23, 0),    // Aug 30, 2026, 11pm
-    description: "Welcome cocktails and dinner to kick off the wedding celebrations!",
+    start: new Date(2026, 7, 30, 19, 30), // Aug 30, 2026, 7:30pm
+    end: new Date(2026, 7, 31, 0, 0),     // Aug 31, 2026, 12am
+    description: "Welcome cocktails and dinner to kick off the wedding celebrations!\nDress Code: Cocktail Attire",
     location: "French Riviera"
   },
   {
     title: "Sophie & Zahi's Wedding - Beach Party",
-    start: new Date(2026, 7, 31, 12, 0),  // Aug 31, 2026, 12pm
-    end: new Date(2026, 7, 31, 18, 0),    // Aug 31, 2026, 6pm
-    description: "Fun day at the beach with the wedding party!",
+    start: new Date(2026, 7, 31, 13, 0),  // Aug 31, 2026, 1pm
+    end: new Date(2026, 7, 31, 18, 30),   // Aug 31, 2026, 6:30pm
+    description: "Fun day at the beach with the wedding party!\nDress Code: Beach Chic - bring your swimsuits!",
     location: "French Riviera"
   },
   {
     title: "Sophie & Zahi's Wedding",
-    start: new Date(2026, 8, 1, 15, 0),   // Sep 1, 2026, 3pm
-    end: new Date(2026, 8, 2, 1, 0),      // Sep 2, 2026, 1am
-    description: "The wedding ceremony and reception of Sophie & Zahi. We can't wait to celebrate with you!",
-    location: "French Riviera"
+    start: new Date(2026, 8, 1, 15, 30),  // Sep 1, 2026, 3:30pm
+    end: new Date(2026, 8, 2, 2, 0),      // Sep 2, 2026, 2am
+    description: "The wedding ceremony and reception of Sophie & Zahi. We can't wait to celebrate with you!\nCeremony: 3:30 PM at Église Saint-Jean-Baptiste, Nice\nReception: 5:00 PM at Domaine du Mont Leuze, Villefranche-sur-Mer\nDress Code: Formal Attire",
+    location: "Église Saint-Jean-Baptiste, Nice, France"
   }
 ];
 
 /**
- * Format date for ICS file (YYYYMMDDTHHMMSS format in UTC)
+ * Format date for ICS file (YYYYMMDDTHHMMSS format, local time with TZID)
  */
 function formatDateForICS(date) {
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(date.getUTCDate()).padStart(2, '0');
-  const hours = String(date.getUTCHours()).padStart(2, '0');
-  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-  return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}${month}${day}T${hours}${minutes}${seconds}`;
 }
 
 /**
@@ -1054,17 +1054,35 @@ function formatDateForGoogle(date) {
  * Generate ICS file content for all wedding events
  */
 function generateICSContent() {
+  const TZ = 'Europe/Paris';
   let icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Sophie & Zahi Wedding//RSVP//EN',
     'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH'
+    'METHOD:PUBLISH',
+    'BEGIN:VTIMEZONE',
+    'TZID:Europe/Paris',
+    'BEGIN:DAYLIGHT',
+    'TZOFFSETFROM:+0100',
+    'TZOFFSETTO:+0200',
+    'TZNAME:CEST',
+    'DTSTART:19700329T020000',
+    'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU',
+    'END:DAYLIGHT',
+    'BEGIN:STANDARD',
+    'TZOFFSETFROM:+0200',
+    'TZOFFSETTO:+0100',
+    'TZNAME:CET',
+    'DTSTART:19701025T030000',
+    'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU',
+    'END:STANDARD',
+    'END:VTIMEZONE'
   ];
 
   WEDDING_EVENTS.forEach((event, index) => {
     const uid = `wedding-event-${index}@sophieandzahi.com`;
-    const dtstamp = formatDateForICS(new Date());
+    const dtstamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const dtstart = formatDateForICS(event.start);
     const dtend = formatDateForICS(event.end);
 
@@ -1072,8 +1090,8 @@ function generateICSContent() {
       'BEGIN:VEVENT',
       `UID:${uid}`,
       `DTSTAMP:${dtstamp}`,
-      `DTSTART:${dtstart}`,
-      `DTEND:${dtend}`,
+      `DTSTART;TZID=${TZ}:${dtstart}`,
+      `DTEND;TZID=${TZ}:${dtend}`,
       `SUMMARY:${event.title}`,
       `DESCRIPTION:${event.description.replace(/\n/g, '\\n')}`,
       `LOCATION:${event.location}`,
