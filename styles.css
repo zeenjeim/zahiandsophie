@@ -774,6 +774,41 @@ p {
   gap: var(--space-xs);
 }
 
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.card__price {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-gold);
+}
+
+.card__actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-cream-dark);
+}
+
+.card__actions a {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-forest);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.card__actions a:hover {
+  color: var(--color-gold);
+}
+
 /* ========================================
    Buttons
    ======================================== */
