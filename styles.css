@@ -984,10 +984,12 @@ p {
 
 .footer__links {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-xl);
+  gap: var(--space-sm) var(--space-xl);
   list-style: none;
   margin-bottom: var(--space-xl);
+  padding: 0 var(--space-md);
 }
 
 .footer__links a {
