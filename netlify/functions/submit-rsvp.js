@@ -66,7 +66,6 @@ exports.handler = async (event) => {
           'Guest': [leader.id],
           'Guest Name': members.map(m => `${m.firstName} ${m.lastName}`).join(', '),
           'Attending': false,
-          'Submitted By': `${leader.firstName} ${leader.lastName}`,
           'Message': message || ''
         }
       });
@@ -84,7 +83,6 @@ exports.handler = async (event) => {
               'Beach Party': guest.events.includes('beach'),
               'Wedding': guest.events.includes('wedding'),
               'Is Adult': guest.isAdult,
-              'Submitted By': `${leader.firstName} ${leader.lastName}`,
               'Message': message || ''
             };
             if (guest.dietary) fields['Dietary'] = guest.dietary;
@@ -100,8 +98,7 @@ exports.handler = async (event) => {
                 'Guest': [guest.id],
                 'Guest Name': `${guest.firstName} ${guest.lastName}`,
                 'Attending': false,
-                'Is Adult': guest.isAdult,
-                'Submitted By': `${leader.firstName} ${leader.lastName}`
+                'Is Adult': guest.isAdult
               }
             });
           });
@@ -115,8 +112,7 @@ exports.handler = async (event) => {
           'Welcome Party': plusOne.events.includes('welcome'),
           'Beach Party': plusOne.events.includes('beach'),
           'Wedding': plusOne.events.includes('wedding'),
-          'Is Plus One': true,
-          'Submitted By': `${leader.firstName} ${leader.lastName}`
+          'Is Plus One': true
         };
         if (plusOne.dietary) plusOneFields['Dietary'] = plusOne.dietary;
         records.push({ fields: plusOneFields });
