@@ -28,7 +28,8 @@ async function createRsvpRecords(apiKey, baseId, records) {
 
   const result = await response.json();
   if (result.error) {
-    throw new Error(`Airtable error: ${result.error.message || result.error}`);
+    console.error('Airtable API error:', JSON.stringify(result.error));
+    throw new Error(`Airtable error: ${result.error.message || JSON.stringify(result.error)}`);
   }
   return result;
 }
@@ -75,21 +76,19 @@ exports.handler = async (event) => {
         guests
           .filter(g => !g.notAttending && g.events && g.events.length > 0)
           .forEach(guest => {
-            records.push({
-              fields: {
-                'Guest': [guest.id],
-                'Guest Name': `${guest.firstName} ${guest.lastName}`,
-                'Attending': true,
-                'Welcome Party': guest.events.includes('welcome'),
-                'Beach Party': guest.events.includes('beach'),
-                'Wedding': guest.events.includes('wedding'),
-                'Meal': guest.meal,
-                'Dietary': guest.dietary,
-                'Is Adult': guest.isAdult,
-                'Submitted By': `${leader.firstName} ${leader.lastName}`,
-                'Message': message || ''
-              }
-            });
+            const fields = {
+              'Guest': [guest.id],
+              'Guest Name': `${guest.firstName} ${guest.lastName}`,
+              'Attending': true,
+              'Welcome Party': guest.events.includes('welcome'),
+              'Beach Party': guest.events.includes('beach'),
+              'Wedding': guest.events.includes('wedding'),
+              'Is Adult': guest.isAdult,
+              'Submitted By': `${leader.firstName} ${leader.lastName}`,
+              'Message': message || ''
+            };
+            if (guest.dietary) fields['Dietary'] = guest.dietary;
+            records.push({ fields });
           });
 
         // Non-attending guests (individual declines within a party)
@@ -110,19 +109,17 @@ exports.handler = async (event) => {
 
       // Plus one record
       if (plusOne && plusOne.name) {
-        records.push({
-          fields: {
-            'Guest Name': `${plusOne.name} (Guest of ${leader.firstName})`,
-            'Attending': true,
-            'Welcome Party': plusOne.events.includes('welcome'),
-            'Beach Party': plusOne.events.includes('beach'),
-            'Wedding': plusOne.events.includes('wedding'),
-            'Meal': plusOne.meal,
-            'Dietary': plusOne.dietary,
-            'Is Plus One': true,
-            'Submitted By': `${leader.firstName} ${leader.lastName}`
-          }
-        });
+        const plusOneFields = {
+          'Guest Name': `${plusOne.name} (Guest of ${leader.firstName})`,
+          'Attending': true,
+          'Welcome Party': plusOne.events.includes('welcome'),
+          'Beach Party': plusOne.events.includes('beach'),
+          'Wedding': plusOne.events.includes('wedding'),
+          'Is Plus One': true,
+          'Submitted By': `${leader.firstName} ${leader.lastName}`
+        };
+        if (plusOne.dietary) plusOneFields['Dietary'] = plusOne.dietary;
+        records.push({ fields: plusOneFields });
       }
     }
 
@@ -141,10 +138,10 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true })
     };
   } catch (error) {
-    console.error('submit-rsvp error:', error);
+    console.error('submit-rsvp error:', error.message || error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to submit RSVP' })
+      body: JSON.stringify({ error: error.message || 'Failed to submit RSVP' })
     };
   }
 };
