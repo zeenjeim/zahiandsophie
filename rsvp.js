@@ -205,14 +205,12 @@ function showAlreadySubmittedView() {
     return;
   }
 
-  // Show calendar section for attending guests
+  // Show calendar section for attending guests with correct events
   const calendarSection = document.getElementById('alreadySubmittedCalendar');
   if (calendarSection) {
     calendarSection.style.display = 'block';
-    const googleCalLink = document.getElementById('googleCalendarLinkAlreadySubmitted');
-    if (googleCalLink) {
-      googleCalLink.href = generateGoogleCalendarUrl();
-    }
+    const eventKeys = getAttendingEventKeysFromExistingRsvp();
+    calendarSection.innerHTML = buildCalendarButtonsHTML(eventKeys);
   }
 
   // Build the read-only summary
@@ -1051,10 +1049,49 @@ function formatDateForGoogle(date) {
 }
 
 /**
- * Generate ICS file content for all wedding events
+ * Map event keys (from RSVP form) to WEDDING_EVENTS indices
  */
-function generateICSContent() {
+const EVENT_KEY_TO_INDEX = { welcome: 0, beach: 1, wedding: 2 };
+const EVENT_KEYS = ['welcome', 'beach', 'wedding'];
+
+/**
+ * Get the union of all attending events from current formData
+ */
+function getAttendingEventKeys() {
+  const keys = new Set();
+  if (formData.guests) {
+    formData.guests.filter(g => !g.notAttending).forEach(g => {
+      g.events.forEach(e => keys.add(e));
+    });
+  }
+  if (formData.plusOne && formData.plusOne.name) {
+    formData.plusOne.events.forEach(e => keys.add(e));
+  }
+  return Array.from(keys);
+}
+
+/**
+ * Get attending event keys from an existing RSVP (already-submitted view)
+ */
+function getAttendingEventKeysFromExistingRsvp() {
+  const keys = new Set();
+  if (existingRsvp && existingRsvp.guests) {
+    existingRsvp.guests.forEach(g => {
+      if (g.events) g.events.forEach(e => keys.add(e));
+    });
+  }
+  return Array.from(keys);
+}
+
+/**
+ * Generate ICS file content for attending wedding events only
+ */
+function generateICSContent(eventKeys) {
   const TZ = 'Europe/Paris';
+  const eventsToInclude = eventKeys
+    ? WEDDING_EVENTS.filter((_, i) => eventKeys.includes(EVENT_KEYS[i]))
+    : WEDDING_EVENTS;
+
   let icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -1080,7 +1117,7 @@ function generateICSContent() {
     'END:VTIMEZONE'
   ];
 
-  WEDDING_EVENTS.forEach((event, index) => {
+  eventsToInclude.forEach((event, index) => {
     const uid = `wedding-event-${index}@sophieandzahi.com`;
     const dtstamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const dtstart = formatDateForICS(event.start);
@@ -1104,10 +1141,10 @@ function generateICSContent() {
 }
 
 /**
- * Download ICS calendar file
+ * Download ICS calendar file (only attending events)
  */
-function downloadCalendarFile() {
-  const icsContent = generateICSContent();
+function downloadCalendarFile(eventKeys) {
+  const icsContent = generateICSContent(eventKeys);
   const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
 
@@ -1121,19 +1158,19 @@ function downloadCalendarFile() {
 }
 
 /**
- * Generate Google Calendar URL for the main wedding event
+ * Generate Google Calendar URL for a single event
  */
-function generateGoogleCalendarUrl() {
-  const wedding = WEDDING_EVENTS[2]; // Main wedding event
-  const startStr = formatDateForGoogle(wedding.start);
-  const endStr = formatDateForGoogle(wedding.end);
+function generateGoogleCalendarUrl(eventIndex) {
+  const event = WEDDING_EVENTS[eventIndex];
+  const startStr = formatDateForGoogle(event.start);
+  const endStr = formatDateForGoogle(event.end);
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: wedding.title,
+    text: event.title,
     dates: `${startStr}/${endStr}`,
-    details: `${wedding.description}\n\nThis event includes:\n• Welcome Party (Aug 30)\n• Beach Party (Aug 31)\n• Wedding Ceremony & Reception (Sep 1)`,
-    location: wedding.location,
+    details: event.description,
+    location: event.location,
     ctz: 'Europe/Paris'
   });
 
@@ -1141,11 +1178,49 @@ function generateGoogleCalendarUrl() {
 }
 
 /**
- * Set up Google Calendar link when showing success state
+ * Build calendar buttons HTML for a set of attending event keys
+ */
+function buildCalendarButtonsHTML(eventKeys) {
+  const eventLabels = { welcome: 'Welcome Party', beach: 'Beach Party', wedding: 'Wedding' };
+
+  let googleLinks = '';
+  eventKeys.forEach(key => {
+    const index = EVENT_KEY_TO_INDEX[key];
+    if (index !== undefined) {
+      const url = generateGoogleCalendarUrl(index);
+      googleLinks += `
+        <a href="${url}" class="btn btn--secondary btn--small" target="_blank" rel="noopener">
+          <span class="btn__icon">&#128197;</span>
+          ${eventLabels[key]}
+        </a>
+      `;
+    }
+  });
+
+  const eventKeysJson = JSON.stringify(eventKeys).replace(/"/g, '&quot;');
+
+  return `
+    <p class="rsvp-calendar__title">Add to your calendar</p>
+    <div class="rsvp-calendar__buttons">
+      <button type="button" class="btn btn--secondary btn--small" onclick='downloadCalendarFile(${JSON.stringify(eventKeys)})'>
+        <span class="btn__icon">&#128197;</span>
+        Download All (.ics)
+      </button>
+    </div>
+    <p class="rsvp-calendar__subtitle">Or add individually to Google Calendar:</p>
+    <div class="rsvp-calendar__buttons">
+      ${googleLinks}
+    </div>
+  `;
+}
+
+/**
+ * Set up calendar links when showing success state
  */
 function setupCalendarLinks() {
-  const googleCalLink = document.getElementById('googleCalendarLink');
-  if (googleCalLink) {
-    googleCalLink.href = generateGoogleCalendarUrl();
+  const calendarSection = document.querySelector('.rsvp-step[data-step="success"] .rsvp-calendar');
+  if (calendarSection) {
+    const eventKeys = getAttendingEventKeys();
+    calendarSection.innerHTML = buildCalendarButtonsHTML(eventKeys);
   }
 }

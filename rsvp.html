@@ -237,20 +237,8 @@
             <h2>Thank You!</h2>
             <p id="successMessage">Your RSVP has been received. We can't wait to celebrate with you!</p>
 
-            <!-- Add to Calendar -->
-            <div class="rsvp-calendar">
-              <p class="rsvp-calendar__title">Add to your calendar</p>
-              <div class="rsvp-calendar__buttons">
-                <button type="button" class="btn btn--secondary btn--small" onclick="downloadCalendarFile()">
-                  <span class="btn__icon">&#128197;</span>
-                  Download .ics
-                </button>
-                <a href="#" id="googleCalendarLink" class="btn btn--secondary btn--small" target="_blank" rel="noopener">
-                  <span class="btn__icon">&#128197;</span>
-                  Google Calendar
-                </a>
-              </div>
-            </div>
+            <!-- Add to Calendar (populated dynamically by setupCalendarLinks) -->
+            <div class="rsvp-calendar"></div>
 
             <a href="index.html" class="btn btn--primary">Back to Home</a>
           </div>
@@ -275,20 +263,8 @@
               <!-- Filled dynamically by JS -->
             </div>
 
-            <!-- Add to Calendar for already submitted guests -->
-            <div class="rsvp-calendar" id="alreadySubmittedCalendar" style="display: none;">
-              <p class="rsvp-calendar__title">Add to your calendar</p>
-              <div class="rsvp-calendar__buttons">
-                <button type="button" class="btn btn--secondary btn--small" onclick="downloadCalendarFile()">
-                  <span class="btn__icon">&#128197;</span>
-                  Download .ics
-                </button>
-                <a href="#" id="googleCalendarLinkAlreadySubmitted" class="btn btn--secondary btn--small" target="_blank" rel="noopener">
-                  <span class="btn__icon">&#128197;</span>
-                  Google Calendar
-                </a>
-              </div>
-            </div>
+            <!-- Add to Calendar for already submitted guests (populated dynamically) -->
+            <div class="rsvp-calendar" id="alreadySubmittedCalendar" style="display: none;"></div>
 
             <p class="rsvp-already-submitted__note">
               Need to make changes? Please <a href="https://wa.me/447541375799" target="_blank" rel="noopener">message Zahi on WhatsApp</a> and we'll help you update your response.

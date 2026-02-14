@@ -1735,6 +1735,13 @@ p {
   justify-content: center;
 }
 
+.rsvp-calendar__subtitle {
+  font-size: 0.8rem;
+  color: var(--color-stone);
+  margin: var(--space-md) 0 var(--space-sm);
+  opacity: 0.8;
+}
+
 .btn--small {
   padding: var(--space-sm) var(--space-md);
   font-size: 0.875rem;
